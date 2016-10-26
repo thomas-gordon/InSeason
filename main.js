@@ -1,6 +1,8 @@
 'use strict';
 
-import { AppRegistry } from 'react-native';
-import InSeasonApp from './components/InSeasonApp';
+//icon ref: Apple by Creative Stall from the Noun Project
 
-AppRegistry.registerComponent('InSeason', () => InSeasonApp);
+import { AppRegistry } from 'react-native';
+import App from './components/App';
+
+AppRegistry.registerComponent('InSeason', () => App);
