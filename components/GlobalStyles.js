@@ -7,7 +7,6 @@ const GlobalStyles = StyleSheet.create({
     appWrapper: {
         flex:1,
         flexDirection: 'column',
-
     },
     webviewWrapper: {
         flex:1,
@@ -17,7 +16,6 @@ const GlobalStyles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop:-68,
         padding:20
     },
     container: {
@@ -41,15 +39,18 @@ const GlobalStyles = StyleSheet.create({
 
     },
     stickyButton: {
-        color:'#ffffff'
+        color:'#ffffff',
+        textAlign:'center'
     },
     nav: {
-        flex: 1,
-        marginTop:-70
+        flex: 1
     },
     navWrap: {
+        flex: 1
+    },
+    searchWrap: {
         flex: 1,
-        marginTop:70
+        marginTop:61
     },
     buttonWrap: {
         backgroundColor: "#349319",

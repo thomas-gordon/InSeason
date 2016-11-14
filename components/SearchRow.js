@@ -1,31 +1,57 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, ListView } from 'react-native';
+import React, { Component } from 'react';
+import { View, Text, StyleSheet, TouchableHighlight, Image, ListView } from 'react-native';
+import DetailPage from '../views/DetailPage';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  text: {
-    marginLeft: 12,
-    fontSize: 16,
-  },
-  photo: {
-    height: 40,
-    width: 40,
-    borderRadius: 20,
-  },
+    container: {
+        flex: 1,
+        padding: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    text: {
+        marginLeft: 12,
+        fontSize: 16,
+    },
+    photo: {
+        height: 40,
+        width: 40,
+        borderRadius: 20,
+    },
 });
 
-const SearchRow = (props) => (
-  <View style={styles.container}>
-    <Image source={{ uri: props.picture.large}} style={styles.photo} />
-    <Text style={styles.text}>
-      {`${props.name.first} ${props.name.last}`}
-    </Text>
-  </View>
-);
+class SearchRow extends Component {
+    _handleBackPress() {
+        this.props.navigator.pop();
+    }
+
+    _handleNextPress(nextRoute) {
+        this.props.navigator.push(nextRoute);
+    }
+
+    render() {
+        const rootProps = this.props;
+        const nextRoute = {
+            component: DetailPage,
+            title: `${rootProps.person.name.first} ${rootProps.person.name.last}`,
+            passProps: { name: rootProps.person.name },
+            rightButtonTitle: ''
+        };
+        return (
+            <View>
+                <TouchableHighlight
+                underlayColor="#cccccc"
+                onPress={() => this._handleNextPress(nextRoute)}>
+                    <View style={styles.container}>
+                        <Image source={{ uri: this.props.person.picture.large}} style={styles.photo} />
+                        <Text style={styles.text}>
+                        {`${rootProps.person.name.first} ${rootProps.person.name.last}`}
+                        </Text>
+                    </View>
+                </TouchableHighlight>
+            </View>
+        )
+    }
+};
 
 export default SearchRow;
