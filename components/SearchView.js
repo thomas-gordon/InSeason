@@ -26,7 +26,8 @@ class SearchView extends Component {
 
         this.state = {
             dataSource: ds.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds),
-            navigator: this.props.navigator
+            navigator: this.props.navigator,
+            loaded: true
         }
     }
 
@@ -46,6 +47,7 @@ class SearchView extends Component {
 
             // Get users whose first name starts with the current letter
             const users = data.filter((user) => user.name.first.toUpperCase().indexOf(currentChar) === 0);
+            console.log(users.length);
 
             // If there are any users who have a first name starting with the current letter then we'll
             // add a new section otherwise we just skip over it
@@ -77,6 +79,20 @@ class SearchView extends Component {
 
         return { dataBlob, sectionIds, rowIds };
     }
+
+    refineSearch(event: Object) {
+        var filter = event.nativeEvent.text.toLowerCase(),
+            newFilter = [];
+    }
+
+    renderSectionHeaderz(sectionData, sectionID) {
+        return (
+            <View style={{backgroundColor:'#cccccc', padding:10}}>
+                <Text style={{color:'#ffffff'}}>{`${sectionData.character}`}</Text>
+            </View>
+        );
+    }
+
     render() {
         return (
             //The height of the navigator bar is 64
@@ -85,16 +101,17 @@ class SearchView extends Component {
                     ref='searchBar'
                     height={60}
                     placeholder='Search'
-                    onChangeText={(text) => console.log('searching for ', text)}
+                    onChangeText={(text) => this.refineSearch(text)}
                     onSearchButtonPress={(text) => console.log('searching for ', text)}
                     onCancelButtonPress={(text) => console.log('searching for ', text)}
                     />
                 <ListView
-                //the list view doesn't size correctly unless this is set here.
-                automaticallyAdjustContentInsets={false}
-                dataSource={this.state.dataSource}
-                renderRow={(props) => <SearchRow navigator={this.state.navigator} person={props} />}
-                //renderSeparator={(sectionId, rowId) => <View key={rowId} style={GlobalStyles.separator} />}
+                    //the list view doesn't size correctly unless this is set here.
+                    automaticallyAdjustContentInsets={false}
+                    dataSource={this.state.dataSource}
+                    renderSectionHeader={this.renderSectionHeaderz}
+                    renderRow={(props) => <SearchRow navigator={this.state.navigator} person={props} />}
+                    renderSeparator={(sectionId, rowId) => <View key={rowId} style={GlobalStyles.separator} />}
                 />
             </View>
         );
