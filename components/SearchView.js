@@ -47,7 +47,6 @@ class SearchView extends Component {
 
             // Get users whose first name starts with the current letter
             const users = data.filter((user) => user.name.first.toUpperCase().indexOf(currentChar) === 0);
-            console.log(users.length);
 
             // If there are any users who have a first name starting with the current letter then we'll
             // add a new section otherwise we just skip over it
@@ -83,7 +82,6 @@ class SearchView extends Component {
     filterSearch(searchInput) {
         searchInput = searchInput ? searchInput.toLowerCase() : 0;
         return demoData.filter(function (e) {
-            console.log(e.name.first.toLowerCase().indexOf(searchInput) === -1, 'test')
             if (searchInput && e.name.first.toLowerCase().indexOf(searchInput) === -1) {
                 return false
             }
@@ -95,8 +93,8 @@ class SearchView extends Component {
         let searchInput = text.toLowerCase();
         let filteredData = this.filterSearch(searchInput);
         let { dataBlob, sectionIds, rowIds } = this.formatData(filteredData);
-        const getSectionData = (dataBlob, sectionId) => dataBlob[sectionId];
-        const getRowData = (dataBlob, sectionId, rowId) => dataBlob[`${rowId}`];
+        let getSectionData = (dataBlob, sectionId) => dataBlob[sectionId];
+        let getRowData = (dataBlob, sectionId, rowId) => dataBlob[`${rowId}`];
         let ds2 = new ListView.DataSource({
             rowHasChanged: (r1, r2) => r1 !== r2,
             sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
