@@ -80,14 +80,38 @@ class SearchView extends Component {
         return { dataBlob, sectionIds, rowIds };
     }
 
-    refineSearch(event: Object) {
-        var filter = event.nativeEvent.text.toLowerCase(),
-            newFilter = [];
+    filterSearch(searchInput) {
+        searchInput = searchInput ? searchInput.toLowerCase() : 0;
+        return demoData.filter(function (e) {
+            console.log(e.name.first.toLowerCase().indexOf(searchInput) === -1, 'test')
+            if (searchInput && e.name.first.toLowerCase().indexOf(searchInput) === -1) {
+                return false
+            }
+            return true
+        })
+    }
+
+    refineSearch(text) {
+        let searchInput = text.toLowerCase();
+        let filteredData = this.filterSearch(searchInput);
+        let { dataBlob, sectionIds, rowIds } = this.formatData(filteredData);
+        const getSectionData = (dataBlob, sectionId) => dataBlob[sectionId];
+        const getRowData = (dataBlob, sectionId, rowId) => dataBlob[`${rowId}`];
+        let ds2 = new ListView.DataSource({
+            rowHasChanged: (r1, r2) => r1 !== r2,
+            sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
+            getSectionData,
+            getRowData,
+        });
+
+        this.setState({
+            dataSource: ds2.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds)
+        });
     }
 
     renderSectionHeaderz(sectionData, sectionID) {
         return (
-            <View style={{backgroundColor:'#cccccc', padding:10}}>
+            <View style={{backgroundColor:'#111111', padding:10}}>
                 <Text style={{color:'#ffffff'}}>{`${sectionData.character}`}</Text>
             </View>
         );
