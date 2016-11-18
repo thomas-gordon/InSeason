@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00032C7D74A94EDE85669A5B /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 186AE38B2C0241B6986DD90B /* Octicons.ttf */; };
 		00764A88E38E43A59A0A7CAF /* libRealmReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5AC3258F20924A128E35B1DB /* libRealmReact.a */; };
@@ -562,7 +561,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0810;
+				LastUpgradeCheck = 810;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {

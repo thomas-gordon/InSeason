@@ -7,6 +7,7 @@ import GlobalStyles from '../components/GlobalStyles';
 import SearchRow from './SearchRow';
 var SearchBar = require('react-native-search-bar');
 import demoData from '../data/Users';
+var dismissKeyboard = require('dismissKeyboard')
 
 class SearchView extends Component {
     constructor(props) {
@@ -125,9 +126,11 @@ class SearchView extends Component {
                     placeholder='Search'
                     onChangeText={(text) => this.refineSearch(text)}
                     onSearchButtonPress={(text) => console.log('searching for ', text)}
-                    onCancelButtonPress={(text) => console.log('searching for ', text)}
+                    onCancelButtonPress={(text) => this.closeKeyboard()}
                     />
                 <ListView
+                    keyboardDismissMode={"on-drag"}
+                    style={{alignSelf: "stretch", paddingBottom: 300 }}
                     //the list view doesn't size correctly unless this is set here.
                     automaticallyAdjustContentInsets={false}
                     dataSource={this.state.dataSource}

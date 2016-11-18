@@ -6,6 +6,7 @@ import { Text, TextInput, View, TouchableWithoutFeedback, Modal, TouchableHighli
 import GlobalStyles from '../components/GlobalStyles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 const filterIcon = (<Icon name="filter" size={20} color="#fff" />);
+const { BlurView, VibrancyView } = require('react-native-blur');
 
 import AboutPage from './AboutPage';
 import SearchView from '../components/SearchView';
@@ -42,15 +43,15 @@ class HomePage extends Component {
                 animationType={'fade'}
                 onRequestClose={() => {alert("Modal has been closed.")}}
                 >
-                    <View style={{padding:20, backgroundColor: 'rgba(0, 0, 0, 0.5)', flex:1, }}>
-                        <View>
+                    <View style={{backgroundColor: 'rgba(255,255,255, 0.4)', flex:1, }}>
+                        <BlurView blurType="light" blurAmount={90} style={{padding:20, backgroundColor: 'rgba(255,255,255, 0.8)', flex:1, alignSelf: "stretch" }}>
                             <Text>Hello World!</Text>
                             <TouchableHighlight onPress={() => {
                                 this.setModalVisible(!this.state.modalVisible)
                             }}>
-                            <Text>Hide Modal</Text>
+                                <Text>Hide Modal</Text>
                             </TouchableHighlight>
-                        </View> 
+                        </BlurView>
                     </View>
                 </Modal>
 
