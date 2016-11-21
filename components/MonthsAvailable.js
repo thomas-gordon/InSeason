@@ -14,16 +14,26 @@ class MonthsAvailable extends Component {
 
         //convert the month strings into a nice time calendar
         //moment().month(Number|String);
-
+        //http://stackoverflow.com/questions/29914572/react-native-flex-not-responding-to-orientation-change
         this.state = {
             initialText: this.props.monthsAvailable,
             months: 'gas',
         }
     }
 
+    _renderMonth() {
+
+    }
+
     render() {
         return (
             <View style={{flex:1}}>
+                <View style=>
+                    <Text>January</Text>
+                </View>
+
+
+
                 <Text>{this.state.initialText}</Text>
                 <Text>{this.state.months}</Text>
             </View>
