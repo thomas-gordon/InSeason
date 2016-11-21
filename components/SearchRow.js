@@ -40,7 +40,6 @@ class SearchRow extends Component {
             passProps: { item: rootProps.item },
             rightButtonTitle: ''
         };
-
         return (
             <View>
                 <TouchableHighlight

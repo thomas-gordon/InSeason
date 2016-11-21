@@ -47,7 +47,7 @@ class SearchView extends Component {
             const currentChar = alphabet[sectionId];
 
             // Get users whose first name starts with the current letter
-            const users = data.filter((item) => item.varietal.toUpperCase().indexOf(currentChar) === 0);
+            const users = data.filter((item) => item.type.toUpperCase().indexOf(currentChar) === 0);
 
             // If there are any users who have a first name starting with the current letter then we'll
             // add a new section otherwise we just skip over it
@@ -83,7 +83,9 @@ class SearchView extends Component {
     filterSearch(searchInput) {
         searchInput = searchInput ? searchInput.toLowerCase() : 0;
         return demoData.filter(function (e) {
-            if (searchInput && e.item.varietal.toLowerCase().indexOf(searchInput) === -1) {
+            console.log(e);
+            let searchString = `${e.type} - ${e.varietal}`
+            if (searchInput && searchString.toLowerCase().indexOf(searchInput) === -1) {
                 return false
             }
             return true

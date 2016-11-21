@@ -6,12 +6,18 @@ import GlobalStyles from './GlobalStyles';
 import packageJSON from '../package';
 import HomePage from '../views/HomePage';
 import AboutPage from '../views/AboutPage';
+import DetailPage from '../views/DetailPage';
+import data from '../data/data';
 
 export default class App extends Component {
     render() {
         const {rootProps} = this.props;
         return (
-            <NavigatorIOS
+            <View style={{flex:1}}>
+                <StatusBar
+                barStyle="light-content"
+                />
+                <NavigatorIOS
                 ref="nav"
                 tintColor="#ffffff"
                 barTintColor={packageJSON.branding.color}
@@ -19,8 +25,15 @@ export default class App extends Component {
                 style={{flex:1}}
                 rightButtonTitle='About'
                 initialRoute={{
+                    // title: data[0].varietal,
+                    // component: DetailPage,
+                    // passProps: {
+                    //     item:data[0]
+                    // },
+
                     component: HomePage,
-                    title: "InSeason",
+                    title: packageJSON.name,
+
                     onRightButtonPress: () => {
                         this.refs.nav.navigator.push({
                             title: "About",
@@ -29,7 +42,8 @@ export default class App extends Component {
                         })
                     }
                 }}
-            />
+                />
+            </View>
         );
     }
 }
