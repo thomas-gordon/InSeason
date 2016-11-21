@@ -6,7 +6,7 @@ import { ScrollView, View, TextInput, Text, StyleSheet, Image, ListView } from '
 import GlobalStyles from '../components/GlobalStyles';
 import SearchRow from './SearchRow';
 var SearchBar = require('react-native-search-bar');
-import demoData from '../data/Users';
+import demoData from '../data/data';
 var dismissKeyboard = require('dismissKeyboard')
 
 class SearchView extends Component {
@@ -47,7 +47,7 @@ class SearchView extends Component {
             const currentChar = alphabet[sectionId];
 
             // Get users whose first name starts with the current letter
-            const users = data.filter((user) => user.name.first.toUpperCase().indexOf(currentChar) === 0);
+            const users = data.filter((item) => item.varietal.toUpperCase().indexOf(currentChar) === 0);
 
             // If there are any users who have a first name starting with the current letter then we'll
             // add a new section otherwise we just skip over it
@@ -83,7 +83,7 @@ class SearchView extends Component {
     filterSearch(searchInput) {
         searchInput = searchInput ? searchInput.toLowerCase() : 0;
         return demoData.filter(function (e) {
-            if (searchInput && e.name.first.toLowerCase().indexOf(searchInput) === -1) {
+            if (searchInput && e.item.varietal.toLowerCase().indexOf(searchInput) === -1) {
                 return false
             }
             return true
@@ -135,7 +135,7 @@ class SearchView extends Component {
                     automaticallyAdjustContentInsets={false}
                     dataSource={this.state.dataSource}
                     renderSectionHeader={this.renderSectionHeaderz}
-                    renderRow={(props) => <SearchRow navigator={this.state.navigator} person={props} />}
+                    renderRow={(props) => <SearchRow navigator={this.state.navigator} item={props} />}
                     renderSeparator={(sectionId, rowId) => <View key={rowId} style={GlobalStyles.separator} />}
                 />
             </View>

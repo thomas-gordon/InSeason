@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableHighlight, Image, ListView } from 'react-native';
 import DetailPage from '../views/DetailPage';
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -21,6 +20,10 @@ const styles = StyleSheet.create({
 });
 
 class SearchRow extends Component {
+    constructor(props) {
+        super(props);
+    }
+
     _handleBackPress() {
         this.props.navigator.pop();
     }
@@ -33,19 +36,20 @@ class SearchRow extends Component {
         const rootProps = this.props;
         const nextRoute = {
             component: DetailPage,
-            title: `${rootProps.person.name.first} ${rootProps.person.name.last}`,
-            passProps: { name: rootProps.person.name },
+            title: `${rootProps.item.type} -  ${rootProps.item.varietal}`,
+            passProps: { item: rootProps.item },
             rightButtonTitle: ''
         };
+
         return (
             <View>
                 <TouchableHighlight
                 underlayColor="#cccccc"
                 onPress={() => this._handleNextPress(nextRoute)}>
                     <View style={styles.container}>
-                        <Image source={{ uri: this.props.person.picture.large}} style={styles.photo} />
+                        <Image source={rootProps.item.image} style={styles.photo}/>
                         <Text style={styles.text}>
-                        {`${rootProps.person.name.first} ${rootProps.person.name.last}`}
+                        {`${rootProps.item.type} - ${rootProps.item.varietal}`}
                         </Text>
                     </View>
                 </TouchableHighlight>

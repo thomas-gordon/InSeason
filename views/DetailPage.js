@@ -10,13 +10,13 @@ class DetailPage extends Component {
 
     }
     componentDidMount() {
-        //console.log(this.props)
+
     }
     render() {
         return (
             <ScrollView style={{flex:1}}>
                 <Text>
-                {`${this.props.name.first} ${this.props.name.last}`} is a hehe
+                {`${this.props.item.varietal}`} is a hehe
                 </Text>
             </ScrollView>
         );
