@@ -16,8 +16,7 @@ class MonthsAvailable extends Component {
         //moment().month(Number|String);
         //http://stackoverflow.com/questions/29914572/react-native-flex-not-responding-to-orientation-change
         this.state = {
-            initialText: this.props.monthsAvailable,
-            months: 'gas',
+            initialText: this.props.monthsAvailable
         }
     }
 
@@ -28,14 +27,7 @@ class MonthsAvailable extends Component {
     render() {
         return (
             <View style={{flex:1}}>
-                <View style=>
-                    <Text>January</Text>
-                </View>
-
-
-
                 <Text>{this.state.initialText}</Text>
-                <Text>{this.state.months}</Text>
             </View>
         )
     }

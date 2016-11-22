@@ -22,6 +22,15 @@ const styles = StyleSheet.create({
 class SearchRow extends Component {
     constructor(props) {
         super(props);
+        if (this.props.item.image !== '') {
+            this.state = {
+                image: true
+            }
+        } else {
+            this.state = {
+                image: false
+            }
+        }
     }
 
     _handleBackPress() {
@@ -32,6 +41,11 @@ class SearchRow extends Component {
         this.props.navigator.push(nextRoute);
     }
 
+    _renderTitle(rootProps) {
+        console.log(rootProps.item.type !== '');
+        return rootProps.item.type !== '' ? `${rootProps.item.type} - ${rootProps.item.varietal}` : `${rootProps.item.varietal}`
+    }
+
     render() {
         const rootProps = this.props;
         const nextRoute = {
@@ -40,15 +54,20 @@ class SearchRow extends Component {
             passProps: { item: rootProps.item },
             rightButtonTitle: ''
         };
+
         return (
             <View>
                 <TouchableHighlight
                 underlayColor="#cccccc"
                 onPress={() => this._handleNextPress(nextRoute)}>
                     <View style={styles.container}>
-                        <Image source={rootProps.item.image} style={styles.photo}/>
+                        {function(){
+                            if (this.state.image) {
+                              return <Image source={rootProps.item.image} style={styles.photo}/>
+                            }
+                        }.call(this)}
                         <Text style={styles.text}>
-                        {`${rootProps.item.type} - ${rootProps.item.varietal}`}
+                            {this._renderTitle(rootProps)}
                         </Text>
                     </View>
                 </TouchableHighlight>

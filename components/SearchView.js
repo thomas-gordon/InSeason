@@ -46,12 +46,19 @@ class SearchView extends Component {
             // Get the character we're currently looking for
             const currentChar = alphabet[sectionId];
 
-            // Get users whose first name starts with the current letter
-            const users = data.filter((item) => item.type.toUpperCase().indexOf(currentChar) === 0);
+            // Get fruits strings that start with the current letter.
+            const items = data.filter((item) => {
+                let itemString;
+                if (item.type === '') {
+                    itemString = item.varietal;
+                } else {
+                    itemString = `${item.type} - ${item.varietal}`;
+                }
+                return itemString.toUpperCase().indexOf(currentChar) === 0;
+            })
 
-            // If there are any users who have a first name starting with the current letter then we'll
-            // add a new section otherwise we just skip over it
-            if (users.length > 0) {
+            
+            if (items.length > 0) {
                 // Add a section id to our array so the listview knows that we've got a new section
                 sectionIds.push(sectionId);
 
@@ -83,7 +90,6 @@ class SearchView extends Component {
     filterSearch(searchInput) {
         searchInput = searchInput ? searchInput.toLowerCase() : 0;
         return demoData.filter(function (e) {
-            console.log(e);
             let searchString = `${e.type} - ${e.varietal}`
             if (searchInput && searchString.toLowerCase().indexOf(searchInput) === -1) {
                 return false

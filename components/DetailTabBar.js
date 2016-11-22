@@ -56,7 +56,7 @@ class TabBarExample extends Component {
             });
           }}>
           <View style={styles.tabContent}>
-            <MonthsAvailable monthsAvailable={this.props.item.monthsAvailable} />
+            <MonthsAvailable monthsAvailable={this.props.item.monthsSeason} />
           </View>
         </IconFA.TabBarItem>
 
@@ -76,7 +76,7 @@ class TabBarExample extends Component {
           }}>
           <View style={styles.tabContent}>
               <Text>
-                {this.props.item.description}
+                {this.props.item.detail}
               </Text>
           </View>
         </IconFA.TabBarItem>
