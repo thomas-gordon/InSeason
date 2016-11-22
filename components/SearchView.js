@@ -57,7 +57,7 @@ class SearchView extends Component {
                 return itemString.toUpperCase().indexOf(currentChar) === 0;
             })
 
-            
+
             if (items.length > 0) {
                 // Add a section id to our array so the listview knows that we've got a new section
                 sectionIds.push(sectionId);
@@ -70,7 +70,7 @@ class SearchView extends Component {
                 rowIds.push([]);
 
                 // Loop over the valid users for this section
-                for (let i = 0; i < users.length; i++) {
+                for (let i = 0; i < items.length; i++) {
                     // Create a unique row id for the data blob that the listview can use for reference
                     const rowId = `${sectionId}:${i}`;
 
@@ -79,7 +79,7 @@ class SearchView extends Component {
                     rowIds[rowIds.length - 1].push(rowId);
 
                     // Store the data we care about for this row
-                    dataBlob[rowId] = users[i];
+                    dataBlob[rowId] = items[i];
                 }
             }
         }
