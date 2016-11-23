@@ -32,7 +32,7 @@ const GlobalStyles = StyleSheet.create({
         bottom:5,
         right:20,
         alignItems: 'center',
-        backgroundColor: "#349319",
+
         padding:5,
         paddingRight:15,
         paddingLeft:15

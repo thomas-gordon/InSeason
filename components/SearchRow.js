@@ -42,7 +42,6 @@ class SearchRow extends Component {
     }
 
     _renderTitle(rootProps) {
-        console.log(rootProps.item.type !== '');
         return rootProps.item.type !== '' ? `${rootProps.item.type} - ${rootProps.item.varietal}` : `${rootProps.item.varietal}`
     }
 
