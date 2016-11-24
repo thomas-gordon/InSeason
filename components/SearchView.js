@@ -5,7 +5,8 @@ import {
     Text, Alert,
     TouchableOpacity,
     StyleSheet,
-    ListView
+    ListView,
+    ActivityIndicator
 } from 'react-native';
 
 import Moment from 'moment';
@@ -23,8 +24,10 @@ const styles = StyleSheet.create({
     bar: {
         flex:1,
         flexDirection:'column',
-        height:50,
-        margin:20
+        height:35,
+        margin:5,
+        marginRight:50,
+        marginLeft:50
     },
     buttonBar: {
         flexDirection:'row',
@@ -34,18 +37,32 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     button: {
-        backgroundColor:'red',
-        height:50,
+        height:30,
+        justifyContent: 'center',
+        flex:1,
+        borderColor:'gray',
+        borderWidth:1,
+        marginLeft:2,
+        marginRight:2,
+        borderRadius:5
+    },
+    buttonText: {
+        color:'gray',
+        textAlign:'center'
+    },
+    buttonActive: {
+        backgroundColor:'green',
+        height:30,
         justifyContent: 'center',
         flex:1,
         marginLeft:2,
-        marginRight:2
+        marginRight:2,
+        borderRadius:5
     },
-    buttonText: {
+    buttonActiveText: {
         color:'white',
         textAlign:'center'
     }
-
 });
 
 //Order by alpha reference
@@ -82,70 +99,68 @@ class SearchView extends Component {
     constructor(props) {
         super(props);
         //this is a little harder. let's do it later!
-        //this._loadInitialState().done();
-
-        //const { dataBlob, sectionIds, rowIds } = this.formatData(demoData, AsyncStorage.getItem(STORAGE_KEY));
-        const { dataBlob, sectionIds, rowIds } = this.formatData(demoData, FILTERS[2][1]);
-
-        const getSectionData = (dataBlob, sectionId) => dataBlob[sectionId];
-        const getRowData = (dataBlob, sectionId, rowId) => dataBlob[`${rowId}`];
-
-        const ds = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1 !== r2,
-            sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
-            getSectionData,
-            getRowData,
-        });
+        this._loadInitialState().done();
 
         this.state = {
-            dataSource: ds.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds),
             navigator: this.props.navigator,
-            loaded: true,
-            orderBy: FILTERS[2][1],
             messages: [],
-            isLoading: true
+            isLoading: true,
+            searchText: '',
+            orderBy:''
         }
-
     }
-    //1. get the initial key.
-    //2. using it if it's defined, pass to the data formatter.
     _loadInitialState = async () => {
         try {
             var value = await AsyncStorage.getItem(STORAGE_KEY);
             if (value !== null){
-                this.setState({orderBy: value});
-                this._appendMessage('Recovered selection from disk: ' + value);
+                this._updateOrder(value);
                 return value
             } else {
-                this._appendMessage('Initialized with no selection on disk.');
+                this._updateOrder(FILTERS[1][0], true);
             }
         } catch (error) {
-            this._appendMessage('AsyncStorage error: ' + error.message);
+            this._updateOrder(FILTERS[1][0], true);
         }
     };
 
-    _updateOrder(orderBy) {
-        const { dataBlob, sectionIds, rowIds } = this.formatData(demoData, orderBy);
-
-        const getSectionData = (dataBlob, sectionId) => dataBlob[sectionId];
-        const getRowData = (dataBlob, sectionId, rowId) => dataBlob[`${rowId}`];
-
-        const ds = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1 !== r2,
-            sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
-            getSectionData,
-            getRowData,
+    _updateOrder = async (orderBy, setNewOrder) => {
+        let orderByElement = FILTERS.find(function (item) {
+            return item[0] === orderBy
         });
 
-        //scroll the scroller to the top!
-        this.refs.scroller.scrollTo({x:0,y:0,animated:true});
+        try {
+            if (setNewOrder === true) {
+                await AsyncStorage.setItem(STORAGE_KEY, orderBy);
+            }
+            const { dataBlob, sectionIds, rowIds } = this.formatData(demoData, orderByElement[1]);
 
-        this.setState({
-            dataSource: ds.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds),
-            orderBy: orderBy,
-        });
+            const getSectionData = (dataBlob, sectionId) => dataBlob[sectionId];
+            const getRowData = (dataBlob, sectionId, rowId) => dataBlob[`${rowId}`];
+
+            const ds = new ListView.DataSource({
+                rowHasChanged: (r1, r2) => r1 !== r2,
+                sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
+                getSectionData,
+                getRowData,
+            });
+
+            //scroll the scroller to the top if it exists!
+            if (this.refs.scroller) {
+                this.refs.scroller.scrollTo({x:0,y:0,animated:true});
+            }
+            console.log(this.refs.searchBar.props.text)
+
+            this.setState({
+                dataSource: ds.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds),
+                orderBy: orderByElement[1],
+                isLoading: false,
+                searchText: ''
+            });
+
+        } catch (error) {
+            Alert.alert('Something went wrong saving your choice. Try again?' + error)
+        }
     }
-
 
     formatData(data, orderBy) {
 
@@ -168,10 +183,17 @@ class SearchView extends Component {
                          itemString = `${item.type} - ${item.varietal}`;
                      }
                      return itemString.toUpperCase().indexOf(currentArrayItem) === 0;
-                 } else if (orderBy === monthsOrder || orderBy === seasonsOrder) {
+                 } else {
                     let currentMonthIndex = sectionId + 1;
                     return item.monthsSeason.indexOf(currentMonthIndex) !== -1;
                 }
+            });
+
+            //alphabetize the items!
+            items.sort((a,b) => {
+                var x = a['varietal'];
+                var y = b['varietal'];
+                return ((x < y) ? -1 : ((x > y) ? 1 : 0));
             });
 
             if (items.length > 0) {
@@ -206,15 +228,12 @@ class SearchView extends Component {
 
     filterSearch(searchInput) {
         searchInput = searchInput ? searchInput.toLowerCase() : 0;
-
         return demoData.filter(function (e) {
-
-                let searchString = `${e.type} - ${e.varietal}`
-                if (searchInput && searchString.toLowerCase().indexOf(searchInput) === -1) {
-                    return false
-                }
-                return true
-
+            let searchString = `${e.type} - ${e.varietal}`
+            if (searchInput && searchString.toLowerCase().indexOf(searchInput) === -1) {
+                return false
+            }
+            return true
         });
     }
 
@@ -239,25 +258,12 @@ class SearchView extends Component {
 
     renderSectionHeaderz(sectionData, sectionID) {
         return (
-            <View style={{backgroundColor:'#111111', padding:10}}>
-                <Text style={{color:'#ffffff'}}>{`${sectionData.character}`}</Text>
+            <View style={{backgroundColor:'#dddddd', padding:10}}>
+                <Text style={{color:'#000000'}}>{`${sectionData.character}`}</Text>
             </View>
         );
     }
 
-    changeOrder = async (orderByFilter) => {
-        try {
-            await AsyncStorage.setItem(STORAGE_KEY, orderByFilter[0]);
-            this._setMessage('Updated saved key to ' + orderByFilter[0] );
-            this._setOrder(orderByFilter[0])
-        } catch (error) {
-            Alert.alert('Something went wrong saving your choice. Try again?')
-        }
-    }
-
-    _setOrder = (orderBy) => {
-        Alert.alert('order is ' + orderBy)
-    }
 
     _setMessage = (message) => {
         this.setState({messages: message});
@@ -271,45 +277,67 @@ class SearchView extends Component {
         return (
             //The height of the navigator bar is 64
             <View style={{backgroundColor: 'white', marginTop:64}}>
-            <SearchBar
-            ref='searchBar'
-            placeholder='Search'
-            onChangeText={(text) => this.refineSearch(text)}
-            onSearchButtonPress={(text) => console.log('searching for ', text)}
-            onCancelButtonPress={(text) => this.closeKeyboard()}
-            />
-            <View style={styles.bar}>
-                <View style={styles.buttonBar}>
-                    <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => this._updateOrder(FILTERS[1][1])}>
-                    <Text style={styles.buttonText}>In Season</Text>
-                    </TouchableOpacity>
 
-                    <TouchableOpacity
-                    onPress={() => this._updateOrder(FILTERS[0][1])}
-                    style={styles.button}>
-                    <Text style={styles.buttonText}>A-Z</Text>
-                    </TouchableOpacity>
+                <SearchBar
+                    text={this.state.searchText}
+                    ref='searchBar'
+                    placeholder='Search'
+                    onChangeText={(text) => this.refineSearch(text)}
+                    onSearchButtonPress={(text) => console.log('searching for ', text)}
+                    onCancelButtonPress={(text) => this.closeKeyboard()}
+                />
 
-                </View>
-                <View style={{flex:.5}}>
-                    <View>
-                    <Text>{this.state.messages}</Text>
+                <View style={styles.bar}>
+                    <View style={styles.buttonBar}>
+                        <View>
+                            <Text>
+                                Show:
+                            </Text>
+                        </View>
+                        <TouchableOpacity
+                        style={(this.state.orderBy === FILTERS[1][1]) ? styles.buttonActive : styles.button }
+                        onPress={() => this._updateOrder(FILTERS[1][0])}>
+                            <Text style={(this.state.orderBy === FILTERS[1][1]) ? styles.buttonActiveText : styles.buttonText }>In Season</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                        style={(this.state.orderBy === FILTERS[1][1]) ? styles.buttonActive : styles.button }
+                        onPress={() => this._updateOrder(FILTERS[0][0])}
+                        style={(this.state.orderBy === FILTERS[0][1]) ? styles.buttonActive : styles.button}>
+                            <Text style={(this.state.orderBy === FILTERS[0][1]) ? styles.buttonActiveText : styles.buttonText }>A-Z</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
-            </View>
 
-            <ListView
-            ref="scroller"
-            keyboardDismissMode={"on-drag"}
-            style={{alignSelf: "stretch", paddingBottom: 300 }}
-            automaticallyAdjustContentInsets={false}
-            dataSource={this.state.dataSource}
-            renderSectionHeader={this.renderSectionHeaderz}
-            renderRow={(props) => <SearchRow navigator={this.state.navigator} item={props} />}
-            renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
-            />
+                {function(){
+                    if (this.state.dataSource) {
+                      return <ListView
+                          ref="scroller"
+                          keyboardDismissMode={"on-drag"}
+                          style={{alignSelf: "stretch", paddingBottom: 300 }}
+                          automaticallyAdjustContentInsets={false}
+                          dataSource={this.state.dataSource}
+                          renderSectionHeader={this.renderSectionHeaderz}
+                          renderRow={(props) => <SearchRow navigator={this.state.navigator} item={props} />}
+                          renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
+                          />
+                    }
+                }.call(this)}
+
+                {function(){
+                    if (this.state.isLoading === true) {
+                      return <ActivityIndicator
+                         animating={true}
+                         style={{
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: 8,
+                          height: 80,
+                          }}
+                         size="large"
+                       />
+                    }
+                }.call(this)}
+
             </View>
         );
     }

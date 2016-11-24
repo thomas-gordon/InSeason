@@ -43,7 +43,7 @@ class TabBarExample extends Component {
         translucent={true}>
         <IconFA.TabBarItem
           selected={this.state.selectedTab === 'seasonalityTab'}
-          title="In Season"
+          title="When to buy"
           iconSize={20}
           iconName="calendar"
           iconColor="gray"

@@ -46,6 +46,9 @@ const detailStyles = StyleSheet.create({
     tabText: {
         color: 'white',
         margin: 50,
+    },
+    headerRightAlign:{
+        flex:1, flexDirection:'column', justifyContent: 'center'
     }
 });
 
@@ -61,7 +64,7 @@ class DetailPage extends Component {
                         <Image source={this.props.item.image} style={detailStyles.image} />
                     </View>
                     <View style={detailStyles.headerRight}>
-                        <View style={{flex:1, flexDirection:'column', justifyContent: 'center'}}>
+                        <View style={detailStyles.headerRightAlign}>
                             <Text style={detailStyles.heading} numberOfLines={1} >{`${this.props.item.type}`}</Text>
                             <Text style={detailStyles.paragraph}>{`${this.props.item.varietal}`}</Text>
                         </View>
