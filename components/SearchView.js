@@ -6,12 +6,12 @@ import {
     TouchableOpacity,
     StyleSheet,
     ListView,
-    ActivityIndicator
+    ActivityIndicator,
+    Animated,
+    TextInput
 } from 'react-native';
 
 import Moment from 'moment';
-
-import SearchBar from 'react-native-search-bar';
 
 import SearchRow from './SearchRow';
 import demoData from '../data/data';
@@ -62,6 +62,21 @@ const styles = StyleSheet.create({
     buttonActiveText: {
         color:'white',
         textAlign:'center'
+    },
+    searchView: {
+        padding:10,
+        backgroundColor:'#ccc'
+    },
+    searchInput: {
+        flex:1,
+        height:40,
+        borderColor:'#ccc',
+        borderWidth:1,
+        borderRadius:5,
+        padding:5,
+        paddingLeft:10,
+        paddingRight:10,
+        backgroundColor:'#ffffff'
     }
 });
 
@@ -145,12 +160,12 @@ class SearchView extends Component {
             });
 
             //scroll the scroller to the top if it exists!
-            if (this.refs.scroller) {
-                this.refs.scroller.scrollTo({x:0,y:0,animated:true});
-            }
-            if (this._textInput) {
-                this._textInput.setNativeProps({text:''})
-            }
+             if (this.refs.scroller) {
+                 this.refs.scroller.scrollTo({x:0,y:0,animated:true});
+             }
+             if (this._textInput) {
+                 this._textInput.setNativeProps({text:''})
+             }
 
             this.setState({
                 dataSource: ds.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds),
@@ -282,14 +297,16 @@ class SearchView extends Component {
         return (
             //The height of the navigator bar is 64
             <View style={{backgroundColor: 'white', marginTop:64}}>
-
-                <SearchBar
-                    ref={component => this._textInput = component}
-                    placeholder='Search'
-                    onChangeText={(text) => this.refineSearch(text)}
-                    onSearchButtonPress={(text) => console.log('searching for ', text)}
-                    onCancelButtonPress={(text) => this.closeKeyboard()}
-                />
+                <View style={styles.searchView}>
+                    <TextInput
+                        style={styles.searchInput}
+                        ref={component => this._textInput = component}
+                        placeholder='Search'
+                        onChangeText={(text) => this.refineSearch(text)}
+                        onSearchButtonPress={(text) => console.log('searching for ', text)}
+                        onCancelButtonPress={(text) => this.closeKeyboard()}
+                    />
+                </View>
 
                 <View style={styles.bar}>
                     <View style={styles.buttonBar}>
