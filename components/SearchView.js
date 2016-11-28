@@ -100,7 +100,7 @@ class SearchView extends Component {
         super(props);
         //this is a little harder. let's do it later!
         this._loadInitialState().done();
-
+        this.clearText = this.clearText.bind(this);
         this.state = {
             navigator: this.props.navigator,
             messages: [],
@@ -148,7 +148,9 @@ class SearchView extends Component {
             if (this.refs.scroller) {
                 this.refs.scroller.scrollTo({x:0,y:0,animated:true});
             }
-            console.log(this.refs.searchBar.props.text)
+            if (this._textInput) {
+                this._textInput.setNativeProps({text:''})
+            }
 
             this.setState({
                 dataSource: ds.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds),
@@ -226,6 +228,10 @@ class SearchView extends Component {
 
     }
 
+    clearText() {
+         this._textInput.setNativeProps({text: ''});
+    }
+
     filterSearch(searchInput) {
         searchInput = searchInput ? searchInput.toLowerCase() : 0;
         return demoData.filter(function (e) {
@@ -264,7 +270,6 @@ class SearchView extends Component {
         );
     }
 
-
     _setMessage = (message) => {
         this.setState({messages: message});
     }
@@ -279,8 +284,7 @@ class SearchView extends Component {
             <View style={{backgroundColor: 'white', marginTop:64}}>
 
                 <SearchBar
-                    text={this.state.searchText}
-                    ref='searchBar'
+                    ref={component => this._textInput = component}
                     placeholder='Search'
                     onChangeText={(text) => this.refineSearch(text)}
                     onSearchButtonPress={(text) => console.log('searching for ', text)}
