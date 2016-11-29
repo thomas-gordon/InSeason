@@ -8,11 +8,13 @@ import HomePage from '../views/HomePage';
 import AboutPage from '../views/AboutPage';
 import DetailPage from '../views/DetailPage';
 import data from '../data/data';
+
 var Orientation = require('react-native-orientation');
 
 export default class App extends Component {
     componentDidMount() {
-        Orientation.lockToPortrait(); //this will lock the view to Portrait
+        Orientation.lockToPortrait();
+        //this will lock the view to Portrait
     }
     render() {
         const {rootProps} = this.props;

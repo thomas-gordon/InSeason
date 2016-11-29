@@ -11,7 +11,8 @@
 
 #import "RCTBundleURLProvider.h"
 #import "RCTRootView.h"
-#import "Orientation.h" // <--- import
+#import "Orientation.h"
+#import "RNQuickActionManager.h"
 
 @implementation AppDelegate
 
@@ -37,6 +38,10 @@
 
 - (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
   return [Orientation getOrientation];
+}
+
+- (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL succeeded)) completionHandler {
+  [RNQuickActionManager onQuickActionPress:shortcutItem completionHandler:completionHandler];
 }
 
 @end

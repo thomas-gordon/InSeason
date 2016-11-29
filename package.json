@@ -28,6 +28,7 @@
     "react-native-dismiss-keyboard": "^1.0.0",
     "react-native-fs": "^2.0.1-rc.2",
     "react-native-orientation": "^1.17.0",
+    "react-native-quick-actions": "^0.1.5",
     "react-native-vector-icons": "^3.0.0",
     "react-test-renderer": "15.4.1",
     "realm": "^0.15.0"

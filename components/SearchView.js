@@ -3,11 +3,10 @@ import {
     View,
     AsyncStorage,
     Text, Alert,
-    TouchableOpacity,
+    TouchableWithoutFeedback,
     StyleSheet,
     ListView,
     ActivityIndicator,
-    Animated,
     TextInput
 } from 'react-native';
 
@@ -64,12 +63,13 @@ const styles = StyleSheet.create({
         textAlign:'center'
     },
     searchView: {
+        flexDirection:'row',
         padding:10,
+        height:60,
         backgroundColor:'#ccc'
     },
     searchInput: {
         flex:1,
-        height:40,
         borderColor:'#ccc',
         borderWidth:1,
         borderRadius:5,
@@ -77,6 +77,35 @@ const styles = StyleSheet.create({
         paddingLeft:10,
         paddingRight:10,
         backgroundColor:'#ffffff'
+    },
+    searchClear: {
+        borderRadius:20,
+        backgroundColor:'gray',
+        width:20,
+        height:20,
+        position:'absolute',
+        right:20,
+        top:20,
+        marginLeft:5,
+        alignSelf: 'center',
+    },
+    searchClearButton: {
+
+    },
+    searchClearButtonText: {
+        textAlign:'center',
+        color:'white',
+        alignSelf: 'center',
+    },
+    noResultsView: {
+        alignSelf: "stretch",
+        padding:30,
+        borderColor:'gray',
+        borderWidth:1,
+        margin:20
+    },
+    noResultsViewText: {
+        fontSize:20
     }
 });
 
@@ -120,7 +149,7 @@ class SearchView extends Component {
             navigator: this.props.navigator,
             messages: [],
             isLoading: true,
-            searchText: '',
+            searchValue: '',
             orderBy:''
         }
     }
@@ -160,24 +189,29 @@ class SearchView extends Component {
             });
 
             //scroll the scroller to the top if it exists!
+
              if (this.refs.scroller) {
-                 this.refs.scroller.scrollTo({x:0,y:0,animated:true});
+                 this.refs.scroller.scrollTo({x:0,y:0,animated:true})
              }
+
              if (this._textInput) {
                  this._textInput.setNativeProps({text:''})
              }
 
             this.setState({
                 dataSource: ds.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds),
+                rowCount: ds.getRowCount(),
                 orderBy: orderByElement[1],
                 isLoading: false,
-                searchText: ''
+                searchText: '',
+                sectionCount: demoData.length
             });
 
         } catch (error) {
             Alert.alert('Something went wrong saving your choice. Try again?' + error)
         }
     }
+
 
     formatData(data, orderBy) {
 
@@ -245,6 +279,7 @@ class SearchView extends Component {
 
     clearText() {
          this._textInput.setNativeProps({text: ''});
+         this.refineSearch('')
     }
 
     filterSearch(searchInput) {
@@ -265,6 +300,7 @@ class SearchView extends Component {
 
         let getSectionData = (dataBlob, sectionId) => dataBlob[sectionId];
         let getRowData = (dataBlob, sectionId, rowId) => dataBlob[`${rowId}`];
+
         let ds2 = new ListView.DataSource({
             rowHasChanged: (r1, r2) => r1 !== r2,
             sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
@@ -273,7 +309,9 @@ class SearchView extends Component {
         });
 
         this.setState({
-            dataSource: ds2.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds)
+            dataSource: ds2.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds),
+            searchValue: text,
+            sectionCount: filteredData.length
         });
     }
 
@@ -285,27 +323,32 @@ class SearchView extends Component {
         );
     }
 
-    _setMessage = (message) => {
-        this.setState({messages: message});
-    }
-
-    _appendMessage = (message) => {
-        this.setState({messages: this.state.messages.concat(message)});
-    }
-
     render() {
         return (
             //The height of the navigator bar is 64
             <View style={{backgroundColor: 'white', marginTop:64}}>
                 <View style={styles.searchView}>
-                    <TextInput
-                        style={styles.searchInput}
-                        ref={component => this._textInput = component}
-                        placeholder='Search'
-                        onChangeText={(text) => this.refineSearch(text)}
-                        onSearchButtonPress={(text) => console.log('searching for ', text)}
-                        onCancelButtonPress={(text) => this.closeKeyboard()}
-                    />
+                    <View style={{flex:1}}>
+                        <TextInput
+                            style={styles.searchInput}
+                            ref={component => this._textInput = component}
+                            placeholder='Search'
+                            onChangeText={(text) => this.refineSearch(text)}
+                            onFocus={() => this.clearText}
+                        />
+                    </View>
+                    {function(){
+                        if (this.state.searchValue !== '') {
+                          return <View style={styles.searchClear}>
+                                  <TouchableWithoutFeedback
+                                      onPress={() => this.clearText('')}>
+                                      <View style={styles.searchClearButton}>
+                                          <Text style={styles.searchClearButtonText}>x</Text>
+                                      </View>
+                                  </TouchableWithoutFeedback>
+                              </View>
+                        }
+                    }.call(this)}
                 </View>
 
                 <View style={styles.bar}>
@@ -315,22 +358,24 @@ class SearchView extends Component {
                                 Show:
                             </Text>
                         </View>
-                        <TouchableOpacity
-                        style={(this.state.orderBy === FILTERS[1][1]) ? styles.buttonActive : styles.button }
-                        onPress={() => this._updateOrder(FILTERS[1][0])}>
-                            <Text style={(this.state.orderBy === FILTERS[1][1]) ? styles.buttonActiveText : styles.buttonText }>In Season</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                        style={(this.state.orderBy === FILTERS[1][1]) ? styles.buttonActive : styles.button }
-                        onPress={() => this._updateOrder(FILTERS[0][0])}
+                        <TouchableWithoutFeedback
+                            onPress={() => this._updateOrder(FILTERS[1][0], true)}>
+                            <View style={(this.state.orderBy === FILTERS[1][1]) ? styles.buttonActive : styles.button }>
+                                <Text style={(this.state.orderBy === FILTERS[1][1]) ? styles.buttonActiveText : styles.buttonText }>In Season</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback
+                        onPress={() => this._updateOrder(FILTERS[0][0], true)}
                         style={(this.state.orderBy === FILTERS[0][1]) ? styles.buttonActive : styles.button}>
-                            <Text style={(this.state.orderBy === FILTERS[0][1]) ? styles.buttonActiveText : styles.buttonText }>A-Z</Text>
-                        </TouchableOpacity>
+                            <View style={(this.state.orderBy === FILTERS[0][1]) ? styles.buttonActive : styles.button }>
+                                <Text style={(this.state.orderBy === FILTERS[0][1]) ? styles.buttonActiveText : styles.buttonText }>A-Z</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
                     </View>
                 </View>
 
                 {function(){
-                    if (this.state.dataSource) {
+                    if (this.state.sectionCount > 0) {
                       return <ListView
                           ref="scroller"
                           keyboardDismissMode={"on-drag"}
@@ -341,8 +386,14 @@ class SearchView extends Component {
                           renderRow={(props) => <SearchRow navigator={this.state.navigator} item={props} />}
                           renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
                           />
+                    } else {
+                        return <View style={styles.noResultsView}>
+                            <Text style={styles.noResultsViewText}>Sorry, there {"aren't"} any results! Keep searchin!</Text>
+                        </View>
                     }
                 }.call(this)}
+
+
 
                 {function(){
                     if (this.state.isLoading === true) {
