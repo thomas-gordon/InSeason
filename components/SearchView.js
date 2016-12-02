@@ -21,24 +21,20 @@ const styles = StyleSheet.create({
         borderBottomWidth: StyleSheet.hairlineWidth,
     },
     bar: {
-        flex:1,
-        flexDirection:'column',
-        height:35,
-        margin:5,
+        height:50,
         marginRight:50,
-        marginLeft:50
+        marginLeft:50,
+        paddingTop:10,
+        paddingBottom:10
     },
     buttonBar: {
-        flexDirection:'row',
-        flex:2,
-        flexGrow:3,
-        justifyContent: 'center',
+        flexDirection: 'row',
         alignItems: 'center',
+        flex:1
     },
     button: {
         height:30,
         justifyContent: 'center',
-        flex:1,
         borderColor:'gray',
         borderWidth:1,
         marginLeft:2,
@@ -51,9 +47,8 @@ const styles = StyleSheet.create({
     },
     buttonActive: {
         backgroundColor:'green',
-        height:30,
         justifyContent: 'center',
-        flex:1,
+        height:30,
         marginLeft:2,
         marginRight:2,
         borderRadius:5
@@ -88,9 +83,6 @@ const styles = StyleSheet.create({
         top:20,
         marginLeft:5,
         alignSelf: 'center',
-    },
-    searchClearButton: {
-
     },
     searchClearButtonText: {
         textAlign:'center',
@@ -353,24 +345,28 @@ class SearchView extends Component {
 
                 <View style={styles.bar}>
                     <View style={styles.buttonBar}>
-                        <View>
+                        <View style={{flex:0.5}}>
                             <Text>
                                 Show:
                             </Text>
                         </View>
-                        <TouchableWithoutFeedback
-                            onPress={() => this._updateOrder(FILTERS[1][0], true)}>
-                            <View style={(this.state.orderBy === FILTERS[1][1]) ? styles.buttonActive : styles.button }>
-                                <Text style={(this.state.orderBy === FILTERS[1][1]) ? styles.buttonActiveText : styles.buttonText }>In Season</Text>
-                            </View>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback
-                        onPress={() => this._updateOrder(FILTERS[0][0], true)}
-                        style={(this.state.orderBy === FILTERS[0][1]) ? styles.buttonActive : styles.button}>
-                            <View style={(this.state.orderBy === FILTERS[0][1]) ? styles.buttonActive : styles.button }>
-                                <Text style={(this.state.orderBy === FILTERS[0][1]) ? styles.buttonActiveText : styles.buttonText }>A-Z</Text>
-                            </View>
-                        </TouchableWithoutFeedback>
+                        <View style={{flex:1}}>
+                            <TouchableWithoutFeedback
+                                onPress={() => this._updateOrder(FILTERS[1][0], true)}>
+                                <View style={(this.state.orderBy === FILTERS[1][1]) ? styles.buttonActive : styles.button }>
+                                    <Text style={(this.state.orderBy === FILTERS[1][1]) ? styles.buttonActiveText : styles.buttonText }>In Season</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                        <View style={{flex:1}}>
+                            <TouchableWithoutFeedback
+                            onPress={() => this._updateOrder(FILTERS[0][0], true)}
+                            style={(this.state.orderBy === FILTERS[0][1]) ? styles.buttonActive : styles.button}>
+                                <View style={(this.state.orderBy === FILTERS[0][1]) ? styles.buttonActive : styles.button }>
+                                    <Text style={(this.state.orderBy === FILTERS[0][1]) ? styles.buttonActiveText : styles.buttonText }>A-Z</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
                     </View>
                 </View>
 
